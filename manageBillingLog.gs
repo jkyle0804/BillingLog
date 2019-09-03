@@ -28,7 +28,7 @@ function setRow() {
   var bruttoAmount = '=RC[-2]+RC[-1]';
   var bruttoAmountDest = incomingtab.getRange(row,12,1,1);
   var conditionOne = incomingtab.getRange(row,1,1,1).getValue();
-  if  (conditionOne != "DATE" ){
+  if  (conditionOne != "Created Date" ){
       exchangeRateDest.setValue(exchangeRate);
       euroAmountDest.setValue(euroAmount);
       taxAmountDest.setValue(taxAmount);
