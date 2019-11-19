@@ -1,5 +1,5 @@
-function onOpen(e) {
-  var ui = SpreadsheetApp.getUi();
+function onOpen() {
+  var ui = SpreadsheetApp.getActive().getUi();
   var active = SpreadsheetApp.getActiveSpreadsheet();
   var detail = active.getSheetByName('Invoice');
   ui.createMenu('Update')
@@ -40,21 +40,24 @@ function setRow() {
 function finaliseRow() {
   var active = SpreadsheetApp.getActive();
   var billingLog = active.getSheetByName('Billing Log');
-  var newRow = billingLog.getRange(billingLog.getLastRow()+1,1,1,14);
   var incomingLog = active.getSheetByName('Incoming Line Items');
+  var number = incomingLog.getRange(incomingLog.getLastRow(),2,1,1).getValue();
+  var numberFinder = billingLog.createTextFinder(number);
+  var updateRow = numberFinder.findNext().getRow();
+  var updateRange = billingLog.getRange(updateRow,1,1,14);
   var incomingRow = incomingLog.getRange(incomingLog.getLastRow(),1,1,14).getValues();
-      newRow.setValues(incomingRow);
+      updateRange.setValues(incomingRow);
       cleanIncomingLog();
 }
 
 function cleanIncomingLog() {
   var activeSheet = SpreadsheetApp.getActive();
   var finalLog = activeSheet.getSheetByName('Billing Log');
-  var logTest = finalLog.getRange(finalLog.getLastRow(),2,1,1).getValue();
   var incomingRow = activeSheet.getSheetByName('Incoming Line Items');
+  var logTest = incomingRow.getRange(1,2,1,1).getValue();
   var lastRow = incomingRow.getLastRow();
   var incomingTest = incomingRow.getRange(lastRow,2,1,1).getValue();
-      if ( incomingTest == logTest) {
+      if ( incomingTest != logTest) {
           incomingRow.deleteRow(lastRow);
           }
 }     
