@@ -16,6 +16,7 @@ function setRow() {
   if  (conditionOne != "Created Date" ){   
     var exchangesheet = sheet.getSheetByName('Exchange Rates');
     var currency = incomingtab.getRange(row,8,1,1).getValue();
+    var duedate = incomingtab.getRange(row,14,1,1).getValue();
     var month = incomingtab.getRange(row,15,1,1).getValue();  
     var rowFinder = exchangesheet.createTextFinder(currency);
     var rowNum = rowFinder.findNext().getRow();
@@ -23,6 +24,7 @@ function setRow() {
     var colNum = colFinder.findNext().getColumn();
     var exchangeRate = exchangesheet.getRange(rowNum,colNum,1,1).getValue();
     var exchangeRateDest = incomingtab.getRange(row,13,1,1);
+    var dueDateDest = incomingtab.getRange(row,14,1,1);
     var euroAmount = '=RC[-1]/RC[3]';
     var euroAmountDest = incomingtab.getRange(row,10,1,1);
     var taxAmount = '=RC[-1]*RC[-4]';
@@ -33,6 +35,7 @@ function setRow() {
         euroAmountDest.setValue(euroAmount);
         taxAmountDest.setValue(taxAmount);
         bruttoAmountDest.setValue(bruttoAmount);
+        dueDateDest.setValue(duedate);
            finaliseRow();
     }
 }
