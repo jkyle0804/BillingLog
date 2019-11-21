@@ -1,4 +1,4 @@
-function onOpen() {
+function onOpen(e) {
   var ui = SpreadsheetApp.getActive().getUi();
   var active = SpreadsheetApp.getActiveSpreadsheet();
   var detail = active.getSheetByName('Invoice');
