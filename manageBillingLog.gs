@@ -49,11 +49,18 @@ function finaliseRow() {
   var active = SpreadsheetApp.getActive();
   var billingLog = active.getSheetByName('Billing Log');
   var incomingLog = active.getSheetByName('Incoming Line Items');
+  var infoSheet = active.getSheetByName('Client Info');
   var number = incomingLog.getRange(incomingLog.getLastRow(),2,1,1).getValue();
   var numberFinder = billingLog.createTextFinder(number);
   var updateRow = numberFinder.findNext().getRow();
   var updateRange = billingLog.getRange(updateRow,1,1,14);
   var incomingRow = incomingLog.getRange(incomingLog.getLastRow(),1,1,14).getValues();
+  var name = incomingLog.getRange(incomingLog.getLastRow(),3,1,1).getValue();
+  var nameFinder = infoSheet.createTextFinder(name);
+  var addRow = nameFinder.findNext().getRow();
+  var geo = infoSheet.getRange(addRow,6,1,2).getValues();
+  var geoRange = billingLog.getRange(updateRow,20,1,2);
+      geoRange.setValues(geo); 
       updateRange.setValues(incomingRow);
       cleanIncomingLog();
 }
