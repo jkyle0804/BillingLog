@@ -1,0 +1,53 @@
+<html>
+  <head>
+    <base target="top">
+    <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+  </head>
+    <body>      
+        <form id="processPaymentForm">
+         <fieldset>
+            <legend>Process Single Payment</legend>
+              <p>
+              <label>Invoice Number</label>
+              <input type = "text" id = "number" name = "number"> 
+              </p>
+              <p>
+              <label>Amount</label>
+              <input type = "text" id = "amount" name = "amount"> 
+              </p>
+              <p>
+              <label>Payment Date</label>
+              <input type = "text" id = "date" name = "date"> 
+              </p>
+              <p>
+               <label>Currency</label>
+                 <select id = "currency" name = "currency">
+                    <option value = "EUR">Euro</option>
+                    <option value = "USD">US Dollar</option>
+                 </select>
+              </p>
+       </fieldset>
+      </form> 
+<input type="button" value="OK"
+onclick="logPayment()" />
+
+<input type="button" value="Cancel"
+onclick="google.script.host.close()" />
+    
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js">
+    </script>
+    <script>
+      function logPayment(){
+        var number = $('#number').val();
+        var amount = $('#amount').val();
+        var date = $('#date').val();
+        var currency = $('#currency').val();
+        google.script.run.withSuccessHandler(closeIt).addPayment(number,amount,currency,date);
+      }
+      function closeIt(){
+        document.getElementById('processPaymentForm').reset();
+      }
+      
+    </script>
+  </body>
+</html>
