@@ -4,11 +4,6 @@ function onOpen() {
   var detail = active.getSheetByName('Invoice');
   ui.createMenu('Billing')
       .addItem('Process Payment', 'showSidebar')
-      .addSeparator()
-      .addSubMenu(ui.createMenu('Status')
-          .addItem('Currently Due', 'showCurrent')
-          .addItem('Currently Overdue', 'showOverdue')
-          .addItem('Recently Paid', 'showRecent'))
       .addToUi();
 }
 
@@ -79,7 +74,7 @@ function cleanIncomingLog() {
 
 function showSidebar() {
   var list = HtmlService.createHtmlOutputFromFile('Sidebar')
-      .setTitle('Recociliations')
+      .setTitle('Reconciliations')
       .setWidth(300);
   SpreadsheetApp.getUi()
       .showSidebar(list);
