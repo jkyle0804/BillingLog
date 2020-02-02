@@ -3,7 +3,9 @@ function onOpen() {
   var active = SpreadsheetApp.getActiveSpreadsheet();
   var detail = active.getSheetByName('Invoice');
   ui.createMenu('Billing')
-      .addItem('Process Payment', 'showSidebar')
+      .addSubMenu(ui.createMenu('Payments')
+         .addItem('Single Payment', 'showSidebar')
+         .addItem('Multiple Payments','paymentsLoop'))
       .addToUi();
 }
 
@@ -55,7 +57,10 @@ function finaliseRow() {
   var addRow = nameFinder.findNext().getRow();
   var geo = infoSheet.getRange(addRow,6,1,2).getValues();
   var geoRange = billingLog.getRange(updateRow,20,1,2);
-      geoRange.setValues(geo); 
+  var year = number.substring(4);
+  var yearRange = billingLog.getRange(updateRow,22,1,1);
+      geoRange.setValues(geo);
+      yearRange.setValue(year);
       updateRange.setValues(incomingRow);
       cleanIncomingLog();
 }
@@ -93,7 +98,6 @@ function addPayment(number,amount,currency,date){
   var euroRange = payments.getRange(row,3,1,1);
   var rateRange = payments.getRange(row,4,1,1);
   var dateRange = payments.getRange(row,5,1,1);
-  var diffRange = payments.getRange(row,6,1,1);
   var rowFinder = exchangesheet.createTextFinder(currency);
   var rowNum = rowFinder.findNext().getRow();
   var colFinder = exchangesheet.createTextFinder(month);
@@ -108,6 +112,24 @@ function addPayment(number,amount,currency,date){
      processPayment();
 }
 
+function paymentsLoop(){
+  var ui = SpreadsheetApp.getUi();
+  var warning = ui.alert('Have you enetered the payment details in the Reconciliations tab?', ui.ButtonSet.YES_NO);
+     if (warning == ui.Button.YES) {
+     var sheet = SpreadsheetApp.getActive();
+     var payments = sheet.getSheetByName('Reconciliations');
+     var test = payments.getRange(1,1,1,1).getValue();
+         for (var i=0; i<payments.length; i++){
+              if (test != "INVOICE NUMBER"){
+                processPayment();
+    }
+  }
+}
+  else if (warning == ui.Button.NO) {
+    ui.alert('You must prepare the payments list before you can process multiple payments.');
+  }
+}
+
 function processPayment(){
   var sheet = SpreadsheetApp.getActive();
   var payments = sheet.getSheetByName('Reconciliations');
@@ -115,9 +137,12 @@ function processPayment(){
   var number = payments.getRange(payments.getLastRow(),1,1,1).getValue();
   var numberFinder = log.createTextFinder(number);
   var updateRow = numberFinder.findNext().getRow();
-  var updateRange = log.getRange(updateRow,15,1,5);
-  var incomingRow = payments.getRange(payments.getLastRow(),2,1,5).getValues();
+  var updateRange = log.getRange(updateRow,15,1,4);
+  var incomingRow = payments.getRange(payments.getLastRow(),2,1,4).getValues();
+  var difference = '"=RC[-7]-RC[-3]';
+  var diffRange = log.getRange(updateRow,18,1,1);
       updateRange.setValues(incomingRow);
+      diffRange.setValue(difference);
       cleanPayments();
 }
 
@@ -126,22 +151,4 @@ function cleanPayments(){
   var payments = sheet.getSheetByName('Reconciliations');
   var cleanRange = payments.getLastRow();
     payments.deleteRow(cleanRange);
-}
-
-function showCurrent(){
-  var sheet = SpreadsheetApp.getActive();
-  var status = sheet.getSheetByName('Reconciliation Status');
-  var resultOne = status.getRange(2,2,1,1).getValue();
-  var resultTwo = status.getRange(3,2,1,1).getValue();
-  var resultThree = status.getRange(4,2,1,1).getValue();
-  var current = HtmlService.createHtmlOutput('<table style="width:100%"><tr><th>Due Within</th><th>Amount</th></tr><tr><td>14 Days</td><td>'+ resultOne +'</td></tr><tr><td>30 Days</td><td>'+ resultTwo +'</td></tr><tr><td>60 Days</td><td>'+ resultThree +'</td></tr></table>')
-      .setWidth(300)
-      .setHeight(200);
-  SpreadsheetApp.getUi().showModalDialog(current, 'Currently Due');
-}
-
-function showOverdue(){
-}
-
-function showRecent(){
 }

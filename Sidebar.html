@@ -2,30 +2,36 @@
   <head>
     <base target="top">
     <link rel="stylesheet" href="https://ssl.gstatic.com/docs/script/css/add-ons1.css">
+        <style>
+      .width-100 {
+        width: 100%;
+        height: 100%
+      }
+      </style>
   </head>
     <body>      
         <form id="processPaymentForm">
          <fieldset>
             <legend>Process Single Payment</legend>
-              <p>
+              <div>
               <label>Invoice Number</label>
-              <input type = "text" id = "number" name = "number"> 
-              </p>
-              <p>
+              <input class = "width-100" type = "text" id = "number" name = "number"> 
+              </div><br>
+              <div>
               <label>Amount</label>
-              <input type = "text" id = "amount" name = "amount"> 
-              </p>
-              <p>
+              <input class = "width-100" type = "text" id = "amount" name = "amount"> 
+              </div><br>
+              <div>
               <label>Payment Date</label>
-              <input type = "text" id = "date" name = "date"> 
-              </p>
-              <p>
+              <input class = "width-100" type = "text" id = "date" name = "date"> 
+              </div><br>
+              <div>
                <label>Currency</label>
-                 <select id = "currency" name = "currency">
+                 <select class = "width-100" id = "currency" name = "currency">
                     <option value = "EUR">Euro</option>
                     <option value = "USD">US Dollar</option>
                  </select>
-              </p>
+              </div><br>
        </fieldset>
       </form> 
 <input type="button" value="OK"
