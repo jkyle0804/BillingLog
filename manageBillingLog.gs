@@ -57,8 +57,8 @@ function finaliseRow() {
   var addRow = nameFinder.findNext().getRow();
   var geo = infoSheet.getRange(addRow,6,1,2).getValues();
   var geoRange = billingLog.getRange(updateRow,20,1,2);
-  var year = number.substring(4);
-  var yearRange = billingLog.getRange(updateRow,22,1,1);
+  var year = number.substring(0,4);
+  var yearRange = billingLog.getRange(updateRow,23,1,1);
       geoRange.setValues(geo);
       yearRange.setValue(year);
       updateRange.setValues(incomingRow);
@@ -151,4 +151,21 @@ function cleanPayments(){
   var payments = sheet.getSheetByName('Reconciliations');
   var cleanRange = payments.getLastRow();
     payments.deleteRow(cleanRange);
+}
+
+function portNumber(){
+  var log = SpreadsheetApp.getActive().getActiveSheet();
+  var approval = log.getActiveCell().getRow();
+  var response = log.getRange(approval,1,1,1).getValue();
+  var number = log.getRange(approval,2,1,1).getValue();
+  var doc = log.getRange(approval,4,1,1).getValue();
+  if (response == 'create'){
+    var invoiceFile = SpreadsheetApp.openById(doc);
+    var newNumber = invoiceFile.getSheetByName('Calculations').getRange(16,6,1,1);
+    var url = "https://docs.google.com/spreadsheets/d/"+doc;
+    var html = "<script>window.open('" + url + "');google.script.host.close();</script>";
+    var userInterface = HtmlService.createHtmlOutput(html);
+        newNumber.setValue(number);
+        SpreadsheetApp.getUi().showModalDialog(userInterface, "Opening Invoice File");    
+  }
 }
