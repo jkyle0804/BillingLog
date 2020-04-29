@@ -3,6 +3,7 @@ function onOpen() {
   var active = SpreadsheetApp.getActiveSpreadsheet();
   var detail = active.getSheetByName('Invoice');
   ui.createMenu('Billing')
+         .addItem('Update Incoming Items', 'setRow')
       .addSubMenu(ui.createMenu('Payments')
          .addItem('Single Payment', 'showSidebar')
          .addItem('Multiple Payments','paymentsLoop'))
@@ -33,11 +34,14 @@ function setRow() {
     var taxAmountDest = incomingtab.getRange(row,11,1,1);
     var bruttoAmount = '=RC[-2]+RC[-1]';
     var bruttoAmountDest = incomingtab.getRange(row,12,1,1);
+    var difference = '=RC[-5]-RC[-2]';
+    var differenceDest =incomingtab.getRange(row,17,1,1);
         exchangeRateDest.setValue(exchangeRate);
         euroAmountDest.setValue(euroAmount);
         taxAmountDest.setValue(taxAmount);
         bruttoAmountDest.setValue(bruttoAmount);
         dueDateDest.setValue(duedate);
+        differenceDest.setValue(difference);
            finaliseRow();
     }
 }
@@ -59,8 +63,19 @@ function finaliseRow() {
   var geoRange = billingLog.getRange(updateRow,20,1,2);
   var year = number.substring(0,4);
   var yearRange = billingLog.getRange(updateRow,23,1,1);
+  var accName = incomingLog.getRange(incomingLog.getLastRow(),3,1,1).getValue();
+  var nameFinder = infoSheet.createTextFinder(accName);
+  var accountRow = nameFinder.findNext().getRow();
+  var accNumber = infoSheet.getRange(accountRow,3,1,1).getValue();
+  var newNumber = billingLog.getRange(updateRow,22,1,1);
+  var removeRange = billingLog.getRange(updateRow,1,1,1);
+  var month = incomingLog.getRange(incomingLog.getLastRow(),15,1,1).getValue();
+  var moveMonth = incomingLog.getRange(incomingLog.getLastRow(),21,1,1);
+      removeRange.clearDataValidations();
+      moveMonth.setValue(month); 
       geoRange.setValues(geo);
       yearRange.setValue(year);
+      newNumber.setValue(accNumber);
       updateRange.setValues(incomingRow);
       cleanIncomingLog();
 }
@@ -92,7 +107,13 @@ function addPayment(number,amount,currency,date){
   var row = payments.getLastRow()+1;
   var today = new Date();
   const monthNames = ["January", "February", "March", "April", "May", "June","July", "August", "September", "October", "November", "December"];
-  var month = monthNames[today.getMonth()-1]
+  var monthCalc = monthNames[today.getMonth()-1]
+  if (monthCalc == null){
+    var month = 'December';
+  }
+  else {
+    month = monthCalc;
+  }
   var numberRange = payments.getRange(row,1,1,1);
   var amountRange = payments.getRange(row,2,1,1);
   var euroRange = payments.getRange(row,3,1,1);
